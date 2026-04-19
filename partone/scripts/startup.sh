@@ -16,7 +16,7 @@ gcloud services enable compute.googleapis.com
 gcloud services enable container.googleapis.com
 
 echo "creating container engine cluster"
-gcloud container clusters create ${CLUSTER_NAME} --preemptible --zone ${INSTANCE_ZONE} --scopes cloud-platform --num-nodes 3
+gcloud container clusters create ${CLUSTER_NAME} --preemptible --zone ${INSTANCE_ZONE} --scopes cloud-platform --num-nodes 1
 
 echo "confirm cluster is running"
 gcloud container clusters list
