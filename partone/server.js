@@ -8,6 +8,9 @@ app.get('/', (req, res) => {
     res.send("Hello Docker");
 })
 
+app.get('/healthcheck', (req, res) => res.sendStatus(200));
+app.get('/readiness',   (req, res) => res.sendStatus(200));
+
 app.listen(PORT, HOST, () => {
     console.log(`Running on http://${HOST}:${PORT}`);
 });

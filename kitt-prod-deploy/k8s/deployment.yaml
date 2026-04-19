@@ -3,28 +3,25 @@ kind: Deployment
 metadata:
   name: endpoints
   labels:
-    app: kubernetes-series
-    tier: endpoints
+    app: endpoints
 spec:
   replicas: 3
   selector:
     matchLabels:
-      tier: endpoints
+      app: endpoints
   template:
     metadata:
       labels:
-        app: kubernetes-series
-        tier: endpoints
+        app: endpoints
     spec:
       containers:
-        - name: partone-container
+        - name: endpoints
+          # Reuses the image built by partone/scripts/startup.sh.
           # PROJECT_NAME is substituted at apply time by scripts/deploy.sh.
           image: gcr.io/PROJECT_NAME/partone-container:latest
           ports:
-            # Informational. The app listens on 8080; see server.js.
             - containerPort: 8080
-          # Readiness: must pass before the pod receives traffic.
-          # /readiness is handled in server.js.
+              name: http
           readinessProbe:
             httpGet:
               port: 8080
@@ -32,25 +29,19 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 3
             periodSeconds: 3
-            successThreshold: 1
-            failureThreshold: 1
             timeoutSeconds: 1
-          # Liveness: failure causes the kubelet to restart the container.
-          # /healthcheck is handled in server.js.
+            failureThreshold: 1
+            successThreshold: 1
           livenessProbe:
             httpGet:
               port: 8080
               path: /healthcheck
               scheme: HTTP
             initialDelaySeconds: 3
-            periodSeconds: 3
-            successThreshold: 1
-            failureThreshold: 1
+            periodSeconds: 10
             timeoutSeconds: 1
+            failureThreshold: 3
+            successThreshold: 1
           env:
-            - name: GCLOUD_PROJECT
-              value: PROJECT_NAME
-            - name: POD_ENDPOINT
-              value: endpoint
             - name: NODE_ENV
               value: production

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: endpoints
+  annotations:
+    # Container-native load balancing: the GKE Ingress controller creates
+    # Network Endpoint Groups (NEGs) pointing directly at Pod IPs, bypassing
+    # kube-proxy/iptables. This is the recommended backend mode for GCE
+    # Ingress and gives a straight LB -> Pod path.
+    cloud.google.com/neg: '{"ingress": true}'
+spec:
+  type: ClusterIP
+  selector:
+    app: endpoints
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
+      protocol: TCP
